@@ -11,7 +11,7 @@ CYAN='\033[0;36m'
 LIGHT='\033[0;37m'
 # ==========================================
 # Getting
-REPO="https://raw.githubusercontent.com/kipasu/f/main/"
+REPO="https://raw.githubusercontent.com/Andyyuda/P/main/"
 echo -e "
 "
 date
@@ -86,7 +86,7 @@ echo -n '#!/bin/bash
 chmod +x /usr/local/bin/ssl_renew.sh
 if ! grep -q 'ssl_renew.sh' /var/spool/cron/crontabs/root;then (crontab -l;echo "15 03 */3 * * /usr/local/bin/ssl_renew.sh") | crontab;fi
 
-mkdir -p /home/vps/public_html
+mkdir -p /var/www/html
 
 # set uuid
 # set uuid
@@ -383,8 +383,8 @@ WantedBy=multi-user.target
 EOF
 
 #nginx config
-wget -O /etc/nginx/conf.d/xray.conf "${REPO}install/xray.conf"
-wget -O /etc/haproxy/haproxy.cfg "${REPO}install/haproxy.cfg"
+wget -O /etc/nginx/conf.d/xray.conf "${REPO}xray/xray.conf"
+wget -O /etc/haproxy/haproxy.cfg "${REPO}xray/haproxy.cfg"
 sed -i 's/xxx/$domain/' /etc/nginx/conf.d/xray.conf
 sed -i 's/xxx/$domain/' /etc/haproxy/haproxy.cfg
 cat /etc/xray/xray.key /etc/xray/xray.crt | tee /etc/haproxy/hap.pem
