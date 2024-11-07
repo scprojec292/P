@@ -344,7 +344,27 @@ echo 'Please send in your comments and/or suggestions to https://t.me/newbie_sto
 echo "Banner /etc/issue.net" >>/etc/ssh/sshd_config
 
 # Ganti Banner
-wget -O /etc/issue.net "${REPO}ssh/issue.net"
+# Buat banner di /etc/issue.net
+cat > /etc/issue.net << END
+happy conneting
+
+<p style="text-align: center;">
+    <span style="color: #41A85F; font-size: 26px;"><strong>KLMPK VPN</strong></span>
+    <span style="font-size: 26px;"><strong> </strong></span>
+    <span style="color: #F37934; font-size: 26px;"><strong>PREMIUM</strong></span>
+    <span style="font-size: 26px;">&nbsp;</span>
+</p>
+<p style="text-align: center;">
+    <span style="font-family: 'Trebuchet MS', Helvetica, sans-serif;">
+        <span style="color: #E25041; background-color: #61BD6D;">Blitar Jatim</span>
+        <span style="background-color: #61BD6D;">&nbsp;</span>
+    </span>
+</p>
+<p style="text-align: center;">
+    <span style="color: #B8312F;">Telp/WhatsApp</span>:
+    <span style="color: #EFEFEF;">082131861788</span>
+</p>
+END
 
 #install bbr dan optimasi kernel
 wget ${REPO}ssh/bbr.sh && chmod +x bbr.sh && ./bbr.sh
