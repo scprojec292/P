@@ -389,7 +389,6 @@ netfilter-persistent reload
 rm ipserver
 
 # download script
-wget -O /etc/issue.net "${REPO}ssh/issue.net"
 cd
 
 cat> /etc/cron.d/auto_exp << END
