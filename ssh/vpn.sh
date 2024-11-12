@@ -1,7 +1,7 @@
 #!/bin/bash
 # ==================================================
 # Link Hosting Kalian
-REPO="https://raw.githubusercontent.com/kipasu/f/main/"
+REPO="https://raw.githubusercontent.com/Andyyuda/P/main/"
 
 # initialisasi var
 export DEBIAN_FRONTEND=noninteractive
