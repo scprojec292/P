@@ -4,7 +4,7 @@ apt dist-upgrade -y
 apt install netfilter-persistent -y
 apt-get remove --purge ufw firewalld -y
 apt install -y screen curl jq bzip2 gzip vnstat coreutils rsyslog iftop zip unzip git apt-transport-https build-essential -y
-REPO="https://raw.githubusercontent.com/kipasu/f/main/"
+REPO="https://raw.githubusercontent.com/Andyyuda/P/main/"
 # initializing var
 export DEBIAN_FRONTEND=noninteractive
 MYIP=$(wget -qO- ipinfo.io/ip)
@@ -270,7 +270,7 @@ rm -rf /root/vnstat-2.6
 
 cd
 apt install haproxy -y
-wget -O /etc/haproxy/haproxy.cfg "https://raw.githubusercontent.com/kipasu/f/ssh/main/haproxy.cfg"
+wget -O /etc/haproxy/haproxy.cfg "https://raw.githubusercontent.com/Andyyuda/P/ssh/main/haproxy.cfg"
 systemctl daemon-reload
 systemctl stop haproxy
 systemctl enable haproxy
