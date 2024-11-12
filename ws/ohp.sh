@@ -11,9 +11,9 @@ CYAN='\033[0;36m'
 LIGHT='\033[0;37m'
 # ==========================================
 
-repo="https://raw.githubusercontent.com/kipasu/f/main"
+repo="https://raw.githubusercontent.com/Andyyuda/P/main"
 
- wget -O /usr/local/bin/ohpserver "${repo}/sshws/ohpserver"
+ wget -O /usr/local/bin/ohpserver "${repo}/ws/ohpserver"
 chmod +x /usr/local/bin/ohpserver
 
 # SSH OHP Port 8181
