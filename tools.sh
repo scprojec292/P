@@ -17,6 +17,8 @@ apt upgrade -y
 apt dist-upgrade -y
 apt install sudo -y
 sudo apt-get clean all
+apt install msmtp -y
+sudo apt install at -y
 apt install -y debconf-utils
 apt install haproxy -y
 apt install p7zip-full -y
