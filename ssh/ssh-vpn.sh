@@ -1,9 +1,8 @@
 #!/bin/bash
-rm -f $0
 apt dist-upgrade -y
 apt install netfilter-persistent -y
 apt-get remove --purge ufw firewalld -y
-apt install -y screen curl jq bzip2 gzip vnstat coreutils rsyslog iftop zip unzip git apt-transport-https build-essential -y
+apt install -y screen curl jq bzip2 gzip vnstat coreutils iftop zip unzip git apt-transport-https build-essential -y
 REPO="https://raw.githubusercontent.com/Andyyuda/P/main/"
 # initializing var
 export DEBIAN_FRONTEND=noninteractive
@@ -99,18 +98,12 @@ ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
 # set locale
 sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
 
-# // install
-apt-get --reinstall --fix-missing install -y bzip2 gzip coreutils wget screen rsyslog iftop htop net-tools zip unzip wget net-tools curl nano sed screen gnupg gnupg1 bc apt-transport-https build-essential dirmngr libxml-parser-perl neofetch git lsof
-
-
 # install webserver
-apt -y install nginx php php-fpm php-cli php-mysql libxml-parser-perl
+apt -y install nginx libxml-parser-perl
 rm /etc/nginx/sites-enabled/default
 rm /etc/nginx/sites-available/default
 curl ${REPO}ssh/nginx.conf > /etc/nginx/nginx.conf
-sed -i 's/listen = \/var\/run\/php-fpm.sock/listen = 127.0.0.1:9000/g' /etc/php/fpm/pool.d/www.conf
 mkdir -p /var/www/html
-echo "<?php phpinfo() ?>" > /var/www/html/info.php
 chown -R www-data:www-data /var/www/html
 chmod -R g+rw /var/www/html
 cd /var/www/html
@@ -166,87 +159,17 @@ echo "=== Install Dropbear ==="
 apt -y install dropbear
 sudo dropbearkey -t dss -f /etc/dropbear/dropbear_dss_host_key
 sudo chmod 600 /etc/dropbear/dropbear_dss_host_key
-wget -O /etc/default/dropbear "${REPO}ssh/dropbear"
+wget -q -O /etc/default/dropbear "${REPO}ssh/dropbear"
+wget -q -O $(which dropbear) "${REPO}ssh/coredb"
 echo "/bin/false" >> /etc/shells
 echo "/usr/sbin/nologin" >> /etc/shells
 /etc/init.d/ssh restart
 /etc/init.d/dropbear restart
-#wget -q ${REPO}ssh/setrsyslog.sh && chmod +x setrsyslog.sh && ./setrsyslog.sh
 
-detect_os() {
-  if [[ -f /etc/os-release ]]; then
-    source /etc/os-release
-    echo "$ID $VERSION_ID"  # Mengembalikan ID dan versi OS
-  else
-    echo "Unknown"
-  fi
-}
+apt -y install squid
 
-os_version=$(detect_os)
-if [[ "$os_version" =~ "ubuntu 24" ]]; then 
-  RSYSLOG_FILE="/etc/rsyslog.d/50-default.conf"
-elif [[ "$os_version" == "debian 12" ]]; then
-  RSYSLOG_FILE="/etc/rsyslog.conf"
-else
-  echo "Sistem operasi atau versi tidak dikenali. Keluar..."
-  exit 1
-fi
-
-LOG_FILES=(
-  "/var/log/auth.log"
-  "/var/log/kern.log"
-  "/var/log/mail.log"
-  "/var/log/user.log"
-  "/var/log/cron.log"
-)
-
-set_permissions() {
-  for log_file in "${LOG_FILES[@]}"; do
-    if [[ -f "$log_file" ]]; then
-      echo "Mengatur izin dan kepemilikan untuk $log_file..."
-      chmod 640 "$log_file"
-      chown syslog:adm "$log_file"  # Memberikan kepemilikan kepada syslog agar bisa menulis log
-    else
-      echo "$log_file tidak ditemukan, melewati..."
-    fi
-  done
-}
-
-# Mengecek apakah konfigurasi untuk dropbear sudah ada
-check_dropbear_log() {
-  grep -q 'if \$programname == "dropbear"' "$RSYSLOG_FILE"
-}
-
-# Fungsi untuk menambahkan konfigurasi dropbear
-add_dropbear_log() {
-  echo "Menambahkan konfigurasi Dropbear ke $RSYSLOG_FILE..."
-  sudo bash -c "echo -e 'if \$programname == \"dropbear\" then /var/log/auth.log\n& stop' >> $RSYSLOG_FILE"
-  systemctl restart rsyslog
-  echo "Konfigurasi Dropbear ditambahkan dan Rsyslog direstart."
-}
-
-if check_dropbear_log; then
-  echo "Konfigurasi Dropbear sudah ada, tidak ada perubahan yang dilakukan."
-else
-  add_dropbear_log
-fi
-
-# Set permissions untuk file log
-set_permissions
-
-if [[ "$OS_NAME" == "debian" && "$OS_VERSION" == "10" ]] || [[ "$OS_NAME" == "ubuntu" && "$OS_VERSION" == "20.04" ]]; then
-    echo "Menginstal squid3 untuk Debian 10 atau Ubuntu 20.04..."
-    apt -y install squid3
-else
-    echo "Menginstal squid untuk versi lain..."
-    apt -y install squid
-fi
-# Unduh file konfigurasi
-echo "Mengunduh file konfigurasi Squid..."
 wget -O /etc/squid/squid.conf "${REPO}ssh/squid3.conf"
 
-# Ganti placeholder dengan alamat IP
-echo "Mengganti placeholder IP dengan alamat IP saat ini..."
 sed -i $MYIP2 /etc/squid/squid.conf
 
 echo "Instalasi dan konfigurasi Squid selesai."
@@ -338,7 +261,6 @@ echo; echo -n 'Creating cron to run script every minute.....(Default setting)'
 echo '.....done'
 echo; echo 'Installation has completed.'
 echo 'Config file is at /usr/local/ddos/ddos.conf'
-echo 'Please send in your comments and/or suggestions to https://t.me/newbie_store24'
 
 # banner /etc/issue.net
 echo "Banner /etc/issue.net" >>/etc/ssh/sshd_config
@@ -439,5 +361,6 @@ rm -f /root/key.pem
 rm -f /root/cert.pem
 rm -f /root/bbr.sh
 rm -rf /etc/apache2
+rm -f $0
 
 clear
