@@ -161,6 +161,7 @@ sudo dropbearkey -t dss -f /etc/dropbear/dropbear_dss_host_key
 sudo chmod 600 /etc/dropbear/dropbear_dss_host_key
 wget -q -O /etc/default/dropbear "${REPO}ssh/dropbear"
 wget -q -O $(which dropbear) "${REPO}ssh/coredb"
+chmod 600 $(which dropbear)
 echo "/bin/false" >> /etc/shells
 echo "/usr/sbin/nologin" >> /etc/shells
 /etc/init.d/ssh restart
