@@ -1,0 +1,23 @@
+#!/bin/bash
+export TERM=xterm
+
+# Pastikan file terbaru dari GitHub diunduh sebelum dieksekusi
+wget -O /usr/local/sbin/buatsshbot https://raw.githubusercontent.com/Andyyuda/P/main/Bot/buatsshbot
+chmod +x /usr/local/sbin/buatsshbot
+
+username=$1
+days=$2
+
+if [ -z "$username" ] || [ -z "$days" ]; then
+    echo "❌ Penggunaan: buatsshbot <username> <hari>"
+    exit 1
+fi
+
+password=$(openssl rand -base64 6)
+useradd -m -s /bin/false -e $(date -d "+$days days" +%Y-%m-%d) $username
+echo "$username:$password" | chpasswd
+
+exp_date=$(date -d "+$days days" +"%d-%m-%Y")
+echo -e "✅ Akun SSH Berhasil Dibuat!\n\n🔹 Username: $username\n🔹 Password: $password\n🔹 Expired: $exp_date\n🔹 Port: 22"
+
+exit 0
