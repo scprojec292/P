@@ -1,6 +1,5 @@
 #!/bin/bash
 export TERM=xterm
-clear
 touch /root/.system
 echo "───────────────────────────────────────"
 echo "            USER LOGIN SSH"
