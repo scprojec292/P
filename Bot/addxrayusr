@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# Fungsi untuk menambahkan pengguna VMess
+add_vmess() {
+    user=$1
+    exp=$2
+    uuid=$3
+    exp_date=$(date -d "$exp days" +"%Y-%m-%d")
+    
+sed -i '/#vmess$/a\### '"$user $exp"'\
+},{"id": "'""$uuid""'","alterId": '"0"',"email": "'""$user""'"' /etc/xray/config.json
+exp=`date -d "$masaaktif days" +"%Y-%m-%d"`
+sed -i '/#vmessgrpc$/a\### '"$user $exp"'\
+},{"id": "'""$uuid""'","alterId": '"0"',"email": "'""$user""'"' /etc/xray/config.json
+systemctl restart xray
+}
+
+# Fungsi untuk menambahkan pengguna VLESS
+add_vless() {
+    user=$1
+    exp=$2
+    uuid=$3
+    exp_date=$(date -d "$exp days" +"%Y-%m-%d")
+    
+sed -i '/#vless$/a\#& '"$user $exp"'\
+},{"id": "'""$uuid""'","email": "'""$user""'"' /etc/xray/config.json
+sed -i '/#vlessgrpc$/a\#& '"$user $exp"'\
+},{"id": "'""$uuid""'","email": "'""$user""'"' /etc/xray/config.json
+sytstemctl restart xray
+}
+
+# Fungsi untuk menambahkan pengguna Trojan
+add_trojan() {
+    user=$1
+    exp=$2
+    uuid=$3
+    exp_date=$(date -d "$exp days" +"%Y-%m-%d")
+    
+sed -i '/#trojanws$/a\#! '"$user $exp"'\
+},{"password": "'""$uuid""'","email": "'""$user""'"' /etc/xray/config.json
+sed -i '/#trojangrpc$/a\#! '"$user $exp"'\
+},{"password": "'""$uuid""'","email": "'""$user""'"' /etc/xray/config.json
+systemctl restart xray
+}
+
+# Parameter input
+type=$1
+user=$2
+exp=$3
+uuid=$4
+
+# Memeriksa jenis dan memanggil fungsi yang sesuai
+if [[ ${type} == "vmess" ]]; then
+    add_vmess "$user" "$exp" "$uuid"
+elif [[ ${type} == "vless" ]]; then
+    add_vless "$user" "$exp" "$uuid"
+elif [[ ${type} == "trojan" ]]; then
+    add_trojan "$user" "$exp" "$uuid"
+else
+    echo "Invalid type: $type"
+    echo "Usage: $0 {vmess|vless|trojan} <user> <exp> <uuid>"
+    exit 1
+fi
