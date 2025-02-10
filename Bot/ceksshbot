@@ -1,5 +1,5 @@
 #!/bin/bash
-
+export TERM=xterm
 g="\e[92;1m"
 RED="\033[31m"
 NC='\033[0m'
