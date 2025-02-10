@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Periksa apakah argumen lengkap
+if [[ $# -ne 2 ]]; then
+    echo "❌ Penggunaan: renewsshbot <username> <jumlah_hari>"
+    exit 1
+fi
+
+USERNAME="$1"
+DAYS="$2"
+
+# Cek apakah user ada di sistem
+if ! id "$USERNAME" &>/dev/null; then
+    echo "❌ User $USERNAME tidak ditemukan!"
+    exit 1
+fi
+
+# Hitung tanggal kedaluwarsa baru
+EXPIRE_DATE=$(date -d "+$DAYS days" +"%Y-%m-%d")
+
+# Set ulang tanggal kedaluwarsa user
+usermod -e "$EXPIRE_DATE" "$USERNAME"
+
+# Pastikan user tidak terkunci
+passwd -u "$USERNAME"
+
+echo "✅ Akun *$USERNAME* diperpanjang selama *$DAYS* hari."
+echo "📅 Expire date baru: $EXPIRE_DATE"
