@@ -6,6 +6,12 @@ red='\e[31m'
 green='\e[32m'
 NC='\e[0m'
 
+# Ambil expired time dari argumen pertama
+pup=$1
+if [ -z "$pup" ]; then
+    pup=60  # Default ke 60 menit jika tidak ada input
+fi
+
 # Mengambil data bot Telegram
 CHATID=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 3)
 KEY=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 2)
@@ -28,12 +34,6 @@ echo "$iplimit" > /etc/klmpk/limit/ssh/ip/$Login
 # Set masa aktif akun SSH
 useradd -e `date -d "$hari days" +"%Y-%m-%d"` -s /bin/false -M $Login
 echo -e "$Pass\n$Pass\n" | passwd $Login &> /dev/null
-
-# Atur waktu expired dalam menit
-echo -e "\033[1;93m---------------------------------------------------\033[0m"
-echo -e " Set Expired In Minutes "
-echo -e "\033[1;93m---------------------------------------------------\033[0m"
-read -p " Menit : " pup
 
 # Kirim informasi akun ke Telegram
 TEXT="<code>---------------------------------------------------</code>
