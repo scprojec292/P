@@ -92,37 +92,31 @@ END
 
 # Tampilkan informasi akun di terminal
 clear
-━━━━━━━━━━━━━━━━━━━━━━━
-   🌟 Trial SSH OVPN Account 🌟
-━━━━━━━━━━━━━━━━━━━━━━━
-📌 **Username**  : $Login  
-🔑 **Password**  : $Pass  
-📡 **Host**      : $domain  
-📍 **Lokasi**    : $(curl -s ipinfo.io/city)  
-🏢 **ISP**       : $(curl -s ipinfo.io/org | cut -d ' ' -f 2-)  
-👥 **Limit IP**  : ${iplimit} User  
-🕐 **Masa Aktif**: $pup Menit  
-━━━━━━━━━━━━━━━━━━━━━━━
-🚀 **Port Service**  
-━━━━━━━━━━━━━━━━━━━━━━━
-🔹 OpenSSH       : 22  
-🔹 Dropbear      : 443, 109, 143  
-🔹 SSH WS        : 80, 8080, 8081-9999  
-🔹 SSH SSL WS    : 443  
-🔹 SSL/TLS       : 400-900  
-🔹 OVPN WS NTLS  : 80, 8080, 8880  
-🔹 OVPN WS TLS   : 443  
-🔹 OVPN TCP      : 1194  
-🔹 OVPN UDP      : 2200  
-🔹 BadVPN UDP    : 7100, 7200, 7300  
-━━━━━━━━━━━━━━━━━━━━━━━
-📥 **Download OVPN**  
-🔗 https://$domain:81/  
-━━━━━━━━━━━━━━━━━━━━━━━
-💾 **Save Link Account**  
-🔗 https://$domain:81/ssh-$Login.txt  
-━━━━━━━━━━━━━━━━━━━━━━━
-🙏 **Terima Kasih Telah Menggunakan Layanan Kami!** 🚀  
-_Script by Andyyuda_
+echo -e "\033[1;93m---------------------------------------------------\033[0m"
+echo -e " Trial SSH OVPN Account "
+echo -e "\033[1;93m---------------------------------------------------\033[0m"
+echo -e "Username         : $Login"
+echo -e "Password         : $Pass"
+echo -e "Limit Ip         : ${iplimit} User"
+echo -e "Host             : $domain"
+echo -e "Location         : $(curl -s ipinfo.io/city)"
+echo -e "ISP             : $(curl -s ipinfo.io/org | cut -d ' ' -f 2-10)"
+echo -e "Port OpenSSH     : 22"
+echo -e "Port Dropbear    : 443, 109"
+echo -e "Port SSH WS      : 80, 8080, 8081-9999"
+echo -e "Port SSH SSL WS  : 443"
+echo -e "Port SSL/TLS     : 400-900"
+echo -e "Port OVPN WS SSL : 443"
+echo -e "Port OVPN SSL    : 443"
+echo -e "Port OVPN TCP    : 1194"
+echo -e "Port OVPN UDP    : 2200"
+echo -e "BadVPN UDP       : 7100, 7300, 7300"
+echo -e "\033[1;93m---------------------------------------------------\033[0m"
+echo -e "OVPN Download    : https://$domain:81/"
+echo -e "Save Link Account: https://$domain:81/ssh-$Login.txt"
+echo -e "\033[1;93m---------------------------------------------------\033[0m"
+echo -e "Berakhir Pada  : $pup Menit"
+echo -e "\033[1;93m---------------------------------------------------\033[0m"
+
 # Hapus user setelah waktu expired
 echo "userdel -f \"$Login\"" | at now + $pup minutes &> /dev/null
