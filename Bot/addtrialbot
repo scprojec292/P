@@ -1,0 +1,128 @@
+#!/bin/bash
+DF='\e[39m'
+Bold='\e[1m'
+yell='\e[33m'
+red='\e[31m'
+green='\e[32m'
+NC='\e[0m'
+
+# Mengambil data bot Telegram
+CHATID=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 3)
+KEY=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 2)
+URL="https://api.telegram.org/bot$KEY/sendMessage"
+
+# Ambil informasi sistem
+IP=$(curl -sS ipv4.icanhazip.com)
+domain=$(cat /etc/xray/domain)
+
+# Set informasi akun SSH
+Login=Trial-`</dev/urandom tr -dc X-Z0-9 | head -c4`
+Pass="1"
+hari="1"
+iplimit="99"
+
+# Buat folder limit IP
+mkdir -p /etc/klmpk/limit/ssh/ip/
+echo "$iplimit" > /etc/klmpk/limit/ssh/ip/$Login
+
+# Set masa aktif akun SSH
+useradd -e `date -d "$hari days" +"%Y-%m-%d"` -s /bin/false -M $Login
+echo -e "$Pass\n$Pass\n" | passwd $Login &> /dev/null
+
+# Atur waktu expired dalam menit
+echo -e "\033[1;93m---------------------------------------------------\033[0m"
+echo -e " Set Expired In Minutes "
+echo -e "\033[1;93m---------------------------------------------------\033[0m"
+read -p " Menit : " pup
+
+# Kirim informasi akun ke Telegram
+TEXT="<code>---------------------------------------------------</code>
+<code>Your Premium VPN Details</code>
+<code>---------------------------------------------------</code>
+<code>IP Address    =</code> <code>$IP</code>
+<code>Hostname      =</code> <code>$domain</code>
+<code>Username      =</code> <code>$Login</code>
+<code>Password      =</code> <code>$Pass</code>
+<code>---------------------------------------------------</code>
+<code>OpenSSH       = 22
+Dropbear      = 443, 109, 143
+SSL/TLS       = 400-900
+SSH WS TLS    = 443
+SSH WS NTLS   = 80, 8080, 8081-9999
+OVPN WS NTLS  = 80, 8080, 8880
+OVPN WS TLS   = 443
+BadVPN UDP    = 7100,7200,7300</code>
+<code>---------------------------------------------------</code>
+Ovpn Download : https://$domain:81/
+<code>---------------------------------------------------</code>
+Save Link Account: https://$domain:81/ssh-$Login.txt
+<code>---------------------------------------------------</code>
+Berakhir Pada  : $pup Menit
+<code>---------------------------------------------------</code>
+"
+
+curl -s -d "chat_id=$CHATID&disable_web_page_preview=1&text=$TEXT&parse_mode=html" $URL >/dev/null
+
+# Simpan informasi akun di file HTML
+mkdir -p /var/www/html
+cat > /var/www/html/ssh-$Login.txt <<-END
+---------------------------------------------------
+Format SSH OVPN Account
+---------------------------------------------------
+Username         : $Login
+Password         : $Pass
+Berakhir Pada    : $pup Menit
+---------------------------------------------------
+IP               : $IP
+Host             : $domain
+Port OpenSSH     : 22
+Port Dropbear    : 443, 109
+Port SSH WS      : 80, 8080, 8081-9999
+Port SSH SSL WS  : 443
+Port SSL/TLS     : 400-900
+Port OVPN WS SSL : 443
+Port OVPN SSL    : 443
+Port OVPN TCP    : 1194
+Port OVPN UDP    : 2200
+BadVPN UDP       : 7100, 7300, 7300
+---------------------------------------------------
+OVPN Download : https://$domain:81/
+---------------------------------------------------
+END
+
+# Tampilkan informasi akun di terminal
+clear
+━━━━━━━━━━━━━━━━━━━━━━━
+   🌟 Trial SSH OVPN Account 🌟
+━━━━━━━━━━━━━━━━━━━━━━━
+📌 **Username**  : $Login  
+🔑 **Password**  : $Pass  
+📡 **Host**      : $domain  
+📍 **Lokasi**    : $(curl -s ipinfo.io/city)  
+🏢 **ISP**       : $(curl -s ipinfo.io/org | cut -d ' ' -f 2-)  
+👥 **Limit IP**  : ${iplimit} User  
+🕐 **Masa Aktif**: $pup Menit  
+━━━━━━━━━━━━━━━━━━━━━━━
+🚀 **Port Service**  
+━━━━━━━━━━━━━━━━━━━━━━━
+🔹 OpenSSH       : 22  
+🔹 Dropbear      : 443, 109, 143  
+🔹 SSH WS        : 80, 8080, 8081-9999  
+🔹 SSH SSL WS    : 443  
+🔹 SSL/TLS       : 400-900  
+🔹 OVPN WS NTLS  : 80, 8080, 8880  
+🔹 OVPN WS TLS   : 443  
+🔹 OVPN TCP      : 1194  
+🔹 OVPN UDP      : 2200  
+🔹 BadVPN UDP    : 7100, 7200, 7300  
+━━━━━━━━━━━━━━━━━━━━━━━
+📥 **Download OVPN**  
+🔗 https://$domain:81/  
+━━━━━━━━━━━━━━━━━━━━━━━
+💾 **Save Link Account**  
+🔗 https://$domain:81/ssh-$Login.txt  
+━━━━━━━━━━━━━━━━━━━━━━━
+🙏 **Terima Kasih Telah Menggunakan Layanan Kami!** 🚀  
+_Script by Andyyuda_
+# Hapus user setelah waktu expired
+echo "userdel -f \"$Login\"" | at now + $pup minutes &> /dev/null
