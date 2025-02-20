@@ -92,7 +92,6 @@ OVPN Download : https://$domain:81/
 END
 
 # Tampilkan informasi akun di terminal
-clear
 echo -e "---------------------------------------------------"
 echo -e " Trial SSH OVPN Account    "
 echo -e "---------------------------------------------------"
