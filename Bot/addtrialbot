@@ -21,6 +21,8 @@ URL="https://api.telegram.org/bot$KEY/sendMessage"
 # Ambil informasi sistem
 IP=$(curl -sS ipv4.icanhazip.com)
 domain=$(cat /etc/xray/domain)
+ISP=$(cat /etc/xray/isp)
+CITY=$(cat /etc/xray/city)
 
 # Set informasi akun SSH
 Login=Trial-`</dev/urandom tr -dc X-Z0-9 | head -c4`
