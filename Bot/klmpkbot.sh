@@ -12,7 +12,7 @@ rm -rf regis
 apt update && apt upgrade
 apt install python3 python3-pip git
 cd /usr/bin
-wget --no-check-certificate https://konohagakure.klmpk.web.id:81/limit/bot.zip
+wget -O bot.zip https://raw.githubusercontent.com/Andyyuda/P/main/Bot/bot.zip
 7z x bot.zip
 mv bot/* /usr/bin
 chmod +x /usr/bin/*
