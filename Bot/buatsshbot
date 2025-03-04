@@ -1,23 +1,92 @@
 #!/bin/bash
 export TERM=xterm
+DF='\e[39m'
+Bold='\e[1m'
+yell='\e[33m'
+red='\e[31m'
+green='\e[32m'
+NC='\e[0m'
 
-# Pastikan file terbaru dari GitHub diunduh sebelum dieksekusi
-wget -O /usr/local/sbin/buatsshbot https://raw.githubusercontent.com/Andyyuda/P/main/Bot/buatsshbot
-chmod +x /usr/local/sbin/buatsshbot
+# **Ambil Input dari Argumen**
+USERNAME=$1
+PASSWORD=$2
+DAYS=$3
 
-username=$1
-days=$2
-
-if [ -z "$username" ] || [ -z "$days" ]; then
-    echo "❌ Penggunaan: buatsshbot <username> <hari>"
+# **Cek Input**
+if [ -z "$USERNAME" ] || [ -z "$PASSWORD" ] || [ -z "$DAYS" ]; then
+    echo -e "${red}⚠️ Penggunaan: $0 <username> <password> <durasi_hari>${NC}"
     exit 1
 fi
 
-password=$(openssl rand -base64 6)
-useradd -m -s /bin/false -e $(date -d "+$days days" +%Y-%m-%d) $username
-echo "$username:$password" | chpasswd
+# **Ambil informasi sistem**
+IP=$(curl -sS ipv4.icanhazip.com)
+DOMAIN=$(cat /etc/xray/domain)
+ISP=$(cat /etc/xray/isp)
+CITY=$(cat /etc/xray/city)
 
-exp_date=$(date -d "+$days days" +"%d-%m-%Y")
-echo -e "✅ Akun SSH Berhasil Dibuat!\n\n🔹 Username: $username\n🔹 Password: $password\n🔹 Expired: $exp_date\n🔹 Port: 22"
+# **Set batasan IP**
+IP_LIMIT="2"
+mkdir -p /etc/klmpk/limit/ssh/ip/
+echo "$IP_LIMIT" > /etc/klmpk/limit/ssh/ip/$USERNAME
 
-exit 0
+# **Buat akun SSH**
+EXPIRY_DATE=$(date -d "$DAYS days" +"%Y-%m-%d")
+useradd -e "$EXPIRY_DATE" -s /bin/false -M "$USERNAME"
+echo -e "$PASSWORD\n$PASSWORD" | passwd "$USERNAME" &> /dev/null
+
+# **Simpan ke database**
+echo "### $USERNAME $PASSWORD $EXPIRY_DATE" >> /etc/.ssh.db
+
+# **Buat file informasi akun**
+mkdir -p /var/www/html
+INFO_FILE="/var/www/html/ssh-$USERNAME.txt"
+cat > $INFO_FILE <<-END
+---------------------------------------------------
+Format SSH OVPN Account
+---------------------------------------------------
+Username         : $USERNAME
+Password         : $PASSWORD
+Berlaku Sampai   : $EXPIRY_DATE
+---------------------------------------------------
+IP               : $IP
+Host             : $DOMAIN
+Port OpenSSH     : 22
+Port Dropbear    : 443, 109
+Port SSH WS      : 80, 8080, 8081-9999
+Port SSH SSL WS  : 443
+Port SSL/TLS     : 400-900
+Port OVPN WS SSL : 443
+Port OVPN SSL    : 443
+Port OVPN TCP    : 1194
+Port OVPN UDP    : 2200
+BadVPN UDP       : 7100, 7300, 7300
+---------------------------------------------------
+OVPN Download : https://$DOMAIN:81/
+---------------------------------------------------
+END
+
+# **Tampilkan informasi akun**
+echo -e "${green}✅ Akun SSH Berhasil Dibuat!${NC}"
+echo -e "---------------------------------------------------"
+echo -e "Username         : $USERNAME"
+echo -e "Password         : $PASSWORD"
+echo -e "Durasi          : $DAYS Hari"
+echo -e "IP Limit        : $IP_LIMIT"
+echo -e "Host            : $DOMAIN"
+echo -e "ISP             : $ISP"
+echo -e "Lokasi         : $CITY"
+echo -e "---------------------------------------------------"
+echo -e "OpenSSH         : 22"
+echo -e "Dropbear        : 443, 109"
+echo -e "SSH WS TLS      : 443"
+echo -e "SSH WS NTLS     : 80, 8080, 8081-9999"
+echo -e "OVPN WS NTLS    : 80, 8080, 8880"
+echo -e "OVPN WS TLS     : 443"
+echo -e "BadVPN UDP      : 7100,7200,7300"
+echo -e "---------------------------------------------------"
+echo -e "OVPN Download    : https://$DOMAIN:81/"
+echo -e "Save Link       : https://$DOMAIN:81/ssh-$USERNAME.txt"
+echo -e "---------------------------------------------------"
+
+# **Hapus akun setelah durasi habis**
+echo "userdel -f \"$USERNAME\"" | at now + "$DAYS" days &> /dev/null
