@@ -19,10 +19,20 @@ if [ -z "$USERNAME" ] || [ -z "$PASSWORD" ] || [ -z "$DAYS" ]; then
 fi
 
 # **Ambil informasi sistem**
-IP=$(curl -sS ipv4.icanhazip.com)
 DOMAIN=$(cat /etc/xray/domain)
-ISP=$(cat /etc/xray/isp)
-CITY=$(cat /etc/xray/city)
+if [[ ! -f /root/.isp ]]; then
+curl -sS ipinfo.io/org?token=7a814b6263b02c > /root/.isp
+fi
+if [[ ! -f /root/.city ]]; then
+curl -sS ipinfo.io/city?token=7a814b6263b02c > /root/.city
+fi
+if [[ ! -f /root/.myip ]]; then
+curl -sS ipv4.icanhazip.com > /root/.myip
+fi
+
+export IP=$(cat /root/.myip);
+export ISP=$(cat /root/.isp);
+export CITY=$(cat /root/.city);
 
 # **Set batasan IP**
 IP_LIMIT="2"
