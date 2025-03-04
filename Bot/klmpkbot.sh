@@ -18,7 +18,7 @@ mv bot/* /usr/bin
 chmod +x /usr/bin/*
 rm -rf bot.zip
 cd /root
-wget --no-check-certificate https://konohagakure.klmpk.web.id:81/regis.zip
+wget -O regis.zip https://raw.githubusercontent.com/Andyyuda/P/main/Bot/regis.zip
 7z x regis.zip
 rm -rf regis.zip
 pip3 install -r regis/requirements.txt
