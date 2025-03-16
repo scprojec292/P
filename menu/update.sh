@@ -1,12 +1,16 @@
 #!/bin/bash
 
- Mengunduh dan mengekstrak menu.zip
+# Update package list dan install unzip jika belum ada
 apt update -y
-apt install -y unzip
+apt install -y unzip wget
 
-    wget https://raw.githubusercontent.com/Andyyuda/v1/main/menu/menu.zip
-    unzip menu.zip
-    chmod +x menu/*
-    mv menu/* /usr/local/sbin
-    rm -rf menu
-    rm -rf menu.zip
+# Mengunduh dan mengekstrak menu.zip
+wget -q https://raw.githubusercontent.com/Andyyuda/v1/main/menu/menu.zip -O menu.zip
+unzip menu.zip
+chmod +x menu/*
+mv menu/* /usr/local/sbin
+rm -rf menu menu.zip
+
+# Mengunduh versionbaru dan menggantinya menjadi "version"
+wget -q https://raw.githubusercontent.com/Andyyuda/P/main/versionbaru -O /usr/local/sbin/version
+chmod +x /usr/local/sbin/version
