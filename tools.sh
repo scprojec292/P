@@ -16,6 +16,8 @@ apt update -y
 apt upgrade -y
 apt dist-upgrade -y
 apt install sudo -y
+sudo apt install python3-pip -y
+pip3 install --upgrade gdown
 sudo apt-get clean all
 apt install msmtp -y
 sudo apt install at -y
