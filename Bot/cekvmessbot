@@ -1,1 +1,59 @@
+#!/usr/bin/env bash
 
+# Fungsi: konversi byte ke format human-readable
+con() {
+    bytes=$1
+    if [ "$bytes" -lt 1024 ]; then
+        echo "${bytes}B"
+    elif [ "$bytes" -lt $((1024 * 1024)) ]; then
+        echo "$(( (bytes + 1023) / 1024 ))KB"
+    elif [ "$bytes" -lt $((1024 * 1024 * 1024)) ]; then
+        echo "$(( (bytes + 1048575) / 1048576 ))MB"
+    else
+        echo "$(( (bytes + 1073741823) / 1073741824 ))GB"
+    fi
+}
+
+# Baca user VMess dari config.json
+mapfile -t users < <(grep -F '###' /etc/xray/config.json | awk '{print $2}' | sort -u)
+
+# Header
+echo "============================================================================="
+echo "                              CEK VMESS ACCOUNT                             "
+echo "============================================================================="
+printf "%-15s %-20s %-15s %-15s %-10s\n" \
+    "USERNAME" "LOGIN" "USAGE QUOTA" "LIMIT QUOTA" "LIMIT IP"
+echo "============================================================================="
+
+# Loop user aktif
+for user in "${users[@]}"; do
+    [ -z "$user" ] && continue
+
+    mapfile -t ip_list < <(
+        grep -F -w "$user" /var/log/xray/access.log | tail -n500 \
+            | awk '{print $3}' \
+            | sed 's|tcp://||g; s|:.*||g' \
+            | sort -u | grep -v "^$"
+    )
+    count=${#ip_list[@]}
+    [ "$count" -eq 0 ] && continue
+
+    iplimit_file="/etc/klmpk/limit/vmess/ip/$user"
+    iplimit=$([ -f "$iplimit_file" ] && cat "$iplimit_file" || echo "-")
+
+    limit_file="/etc/vmess/$user"
+    limit_bytes=$([ -f "$limit_file" ] && cat "$limit_file" || echo "0")
+    limit_quota=$(con "$limit_bytes")
+
+    usage_file="/etc/limit/vmess/$user"
+    usage_bytes=$([ -f "$usage_file" ] && cat "$usage_file" || echo "0")
+    usage_quota=$(con "$usage_bytes")
+
+    printf "%-15s %-20s %-15s %-15s %-10s\n" \
+        "$user" "$count IP" "$usage_quota" "$limit_quota" "$iplimit IP"
+done
+
+# Footer
+echo "============================================================================="
+echo "        Selamat menggunakan script by Andyyuda"
+echo "============================================================================="
