@@ -1,1 +1,55 @@
+#!/usr/bin/env bash
 
+# Fungsi: konversi byte ke format readable
+con() {
+    bytes=$1
+    if [ "$bytes" -lt 1024 ]; then
+        echo "${bytes}B"
+    elif [ "$bytes" -lt $((1024 * 1024)) ]; then
+        echo "$(( (bytes + 1023) / 1024 ))KB"
+    elif [ "$bytes" -lt $((1024 * 1024 * 1024)) ]; then
+        echo "$(( (bytes + 1048575) / 1048576 ))MB"
+    else
+        echo "$(( (bytes + 1073741823) / 1073741824 ))GB"
+    fi
+}
+
+# Ambil daftar user VLESS dari config.json (tanda '#&')
+mapfile -t data < <(grep '#&' /etc/xray/config.json | awk '{print $2}' | sort -u)
+
+# Header
+echo "============================================================================="
+echo "                            CEK VLESS ACCOUNT                                "
+echo "============================================================================="
+printf "%-15s %-20s %-15s %-15s %-10s\n" "USERNAME" "LOGIN" "USAGE QUOTA" "LIMIT QUOTA" "LIMIT IP"
+echo "============================================================================="
+
+# Loop user VLESS
+for akun in "${data[@]}"; do
+    [ -z "$akun" ] && continue
+
+    mapfile -t ip_list < <(
+        grep -F -w "$akun" /var/log/xray/access.log | tail -n500 \
+        | awk '{print $3}' | sed 's|tcp://||g; s|:.*||g' | sort -u | grep -v "^$"
+    )
+    count=${#ip_list[@]}
+    [ "$count" -eq 0 ] && continue
+
+    iplimit_file="/etc/klmpk/limit/vless/ip/${akun}"
+    byte_file="/etc/vless/${akun}"
+    usage_file="/etc/limit/vless/${akun}"
+
+    iplimit=$([ -f "$iplimit_file" ] && cat "$iplimit_file" || echo "-")
+    byte=$([ -f "$byte_file" ] && cat "$byte_file" || echo 0)
+    usage=$([ -f "$usage_file" ] && cat "$usage_file" || echo 0)
+
+    lim=$(con "$byte")
+    gb=$(con "$usage")
+
+    printf "%-15s %-20s %-15s %-15s %-10s\n" "$akun" "$count IP" "$gb" "$lim" "$iplimit IP"
+done
+
+# Footer
+echo "============================================================================="
+echo "     Selamat menggunakan script by Andyyuda"
+echo "============================================================================="
