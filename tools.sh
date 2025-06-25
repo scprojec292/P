@@ -20,7 +20,7 @@ sudo apt install python3-pip -y
 pip3 install --upgrade gdown
 sudo apt-get clean all
 apt install msmtp -y
-sudo apt install at -y
+apt install at -y
 apt install -y debconf-utils
 apt install haproxy -y
 apt install p7zip-full -y
