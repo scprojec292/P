@@ -17,14 +17,11 @@ con() {
 # Ambil user Trojan dari config.json (marker '#!')
 mapfile -t data < <(grep '^#!' /etc/xray/config.json | awk '{print $2}' | sort -u)
 
-# Header
-echo "============================================================================="
-echo "                           CEK TROJAN ACCOUNT                                "
-echo "============================================================================="
-printf "%-15s %-20s %-15s %-15s %-10s\n" "USERNAME" "LOGIN" "USAGE QUOTA" "LIMIT QUOTA" "LIMIT IP"
-echo "============================================================================="
+# Output WhatsApp-style
+echo '```'
+echo "🐉 CEK STATUS TROJAN"
+echo "━━━━━━━━━━━━━━━━━━━━━━"
 
-# Loop user Trojan
 for akun in "${data[@]}"; do
     [ -z "$akun" ] && continue
 
@@ -46,10 +43,14 @@ for akun in "${data[@]}"; do
     lim=$(con "$byte")
     gb=$(con "$usage")
 
-    printf "%-15s %-20s %-15s %-15s %-10s\n" "$akun" "$count IP" "$gb" "$lim" "$iplimit IP"
+    echo "╭━━ Trojan Account ━━╮"
+    echo "┣ 👤 Username : $akun"
+    echo "┣ 🌐 Login IP : $count IP"
+    echo "┣ 📊 Penggunaan : $gb"
+    echo "┣ 📦 Limit Kuota : $lim"
+    echo "┣ 🔐 Batas IP : $iplimit IP"
+    echo "╰━━━━━━━━━━━━━━━━━━━╯"
 done
 
-# Footer
-echo "============================================================================="
-echo "     Selamat menggunakan script by Andyyuda"
-echo "============================================================================="
+echo "Script by github.com/Andyyuda"
+echo '```'
