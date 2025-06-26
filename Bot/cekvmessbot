@@ -17,15 +17,11 @@ con() {
 # Baca user VMess dari config.json
 mapfile -t users < <(grep -F '###' /etc/xray/config.json | awk '{print $2}' | sort -u)
 
-# Header
-echo "============================================================================="
-echo "                              CEK VMESS ACCOUNT                             "
-echo "============================================================================="
-printf "%-15s %-20s %-15s %-15s %-10s\n" \
-    "USERNAME" "LOGIN" "USAGE QUOTA" "LIMIT QUOTA" "LIMIT IP"
-echo "============================================================================="
+# Awal blok WA
+echo '```'
+echo "📡 CEK STATUS VMESS"
+echo "━━━━━━━━━━━━━━━━━━━━━━"
 
-# Loop user aktif
 for user in "${users[@]}"; do
     [ -z "$user" ] && continue
 
@@ -49,11 +45,14 @@ for user in "${users[@]}"; do
     usage_bytes=$([ -f "$usage_file" ] && cat "$usage_file" || echo "0")
     usage_quota=$(con "$usage_bytes")
 
-    printf "%-15s %-20s %-15s %-15s %-10s\n" \
-        "$user" "$count IP" "$usage_quota" "$limit_quota" "$iplimit IP"
+    echo "╭━━ VMess Account ━━╮"
+    echo "┣ 👤 Username : $user"
+    echo "┣ 🌐 Login IP : $count IP"
+    echo "┣ 📊 Penggunaan : $usage_quota"
+    echo "┣ 📦 Limit Kuota : $limit_quota"
+    echo "┣ 🔐 Batas IP : $iplimit IP"
+    echo "╰━━━━━━━━━━━━━━━━━━━╯"
 done
 
-# Footer
-echo "============================================================================="
-echo "        Selamat menggunakan script by Andyyuda"
-echo "============================================================================="
+echo "Script by github.com/Andyyuda"
+echo '```'
