@@ -24,7 +24,9 @@ sed -i '/#vmessgrpc$/a\### '"$user $exp"'\
 link_tls="vmess://$(echo "{\"v\": \"2\",\"ps\": \"$user\",\"add\": \"$domain\",\"port\": \"443\",\"id\": \"$uuid\",\"aid\": \"0\",\"net\": \"ws\",\"type\": \"none\",\"host\": \"$domain\",\"path\": \"/vmess\",\"tls\": \"tls\"}" | base64 -w 0)"
 link_ntls="vmess://$(echo "{\"v\": \"2\",\"ps\": \"$user\",\"add\": \"$domain\",\"port\": \"80\",\"id\": \"$uuid\",\"aid\": \"0\",\"net\": \"ws\",\"type\": \"none\",\"host\": \"$domain\",\"path\": \"/vmess\",\"tls\": \"none\"}" | base64 -w 0)"
 link_grpc="vmess://$(echo "{\"v\": \"2\",\"ps\": \"$user\",\"add\": \"$domain\",\"port\": \"443\",\"id\": \"$uuid\",\"aid\": \"0\",\"net\": \"grpc\",\"type\": \"none\",\"host\": \"$domain\",\"path\": \"vmess-grpc\",\"tls\": \"tls\"}" | base64 -w 0)"
-
+echo "$link_tls"
+echo "$link_ntls"
+echo "$link_grpc"
 # Simpan config OpenClash
 mkdir -p /var/www/html
 cat >/var/www/html/vmess-$user.txt <<-END
