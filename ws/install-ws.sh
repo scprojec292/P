@@ -7,7 +7,7 @@ apt install python3-requests -y
 
 mkdir -p /etc/websocket
 
-repo="https://raw.githubusercontent.com/Andyyuda/P/main"
+repo="https://raw.githubusercontent.com/scprojec292/P/main"
 
 wget -q -O /etc/websocket/ws.py "${repo}/ws/ws.py"
 chmod +x /etc/websocket/ws.py
