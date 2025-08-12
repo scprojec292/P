@@ -12,13 +12,13 @@ rm -rf regis
 apt update && apt upgrade
 apt install python3 python3-pip git
 cd /usr/bin
-wget -O bot.zip https://raw.githubusercontent.com/Andyyuda/P/main/Bot/bot.zip
+wget -O bot.zip https://raw.githubusercontent.com/scprojec292/P/main/Bot/bot.zip
 7z x bot.zip
 mv bot/* /usr/bin
 chmod +x /usr/bin/*
 rm -rf bot.zip
 cd /root
-wget -O regis.zip https://raw.githubusercontent.com/Andyyuda/P/main/Bot/regis.zip
+wget -O regis.zip https://raw.githubusercontent.com/scprojec292/P/main/Bot/regis.zip
 7z x regis.zip
 rm -rf regis.zip
 pip3 install -r regis/requirements.txt
@@ -47,7 +47,7 @@ clear
 cat >/usr/bin/andy <<EOF
 #!/bin/bash
 cd /root
-python3.8 -m regis
+python3 -m regis
 EOF
 chmod +x /usr/bin/andy
 
