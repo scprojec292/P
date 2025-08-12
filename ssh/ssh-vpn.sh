@@ -194,7 +194,7 @@ rm -rf /root/vnstat-2.6
 
 cd
 apt install haproxy -y
-wget -O /etc/haproxy/haproxy.cfg "https://raw.githubusercontent.com/Andyyuda/P/ssh/main/haproxy.cfg"
+wget -O /etc/haproxy/haproxy.cfg "https://raw.githubusercontent.com/scprojec292/P/ssh/main/haproxy.cfg"
 systemctl daemon-reload
 systemctl stop haproxy
 systemctl enable haproxy
@@ -272,7 +272,7 @@ cat > /etc/issue.net << END
 happy conneting
 
 <p style="text-align: center;">
-    <span style="color: #41A85F; font-size: 26px;"><strong>KLMPK VPN</strong></span>
+    <span style="color: #41A85F; font-size: 26px;"><strong>scprojec292</strong></span>
     <span style="font-size: 26px;"><strong> </strong></span>
     <span style="color: #F37934; font-size: 26px;"><strong>PREMIUM</strong></span>
     <span style="font-size: 26px;">&nbsp;</span>
